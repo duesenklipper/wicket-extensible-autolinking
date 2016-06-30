@@ -1,0 +1,2 @@
+.regular { background: url("test.png"); }
+.ctxroot { background: url("ctx:/res/test.png"); }

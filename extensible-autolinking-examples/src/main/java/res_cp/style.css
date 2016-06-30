@@ -19,6 +19,11 @@
 	height: 100px;
 	background: url("rs0:/img/logo.png") no-repeat;
 }
+#test_ctx {
+	width: 100px;
+	height: 100px;
+	background: url("ctx:/res_ctx/logo.png") no-repeat;
+}
 img {
 	display: block;
 }

@@ -20,6 +20,7 @@ import static org.apache.wicket.markup.parser.filter.WicketLinkTagHandler.AUTOLI
 import static org.apache.wicket.resource.CssUrlReplacer.EMBED_BASE64;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +52,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.CssUrlReplacer;
 import org.apache.wicket.resource.IScopeAwareTextResourceProcessor;
-import org.apache.wicket.response.StringResponse;
+import org.apache.wicket.response.ByteArrayResponse;
 import org.apache.wicket.util.image.ImageUtil;
 
 public class ExtensibleAutolinker
@@ -85,6 +86,8 @@ public class ExtensibleAutolinker
 		application.getPageSettings().addComponentResolver(autolinker.newComponentResolver());
 
 		application.getResourceSettings().setCssCompressor(autolinker.getCssProcessor());
+
+		application.getMarkupSettings().setAutomaticLinking(true);
 
 		return autolinker;
 	}
@@ -135,7 +138,10 @@ public class ExtensibleAutolinker
 					}
 				}
 				boolean embedded = false;
-				if (processedUrl == null)
+				// if we didn't find anything to resolve, but we have a scope, that means we can let the
+				// original CssUrlReplacer logic run. If we don't have a scope, that means we are not in the classpath
+				// but in the webapp context, where PackageResourceReferences don't work.
+				if (processedUrl == null && scope != null)
 				{
 					Url imageCandidateUrl = Url.parse(urlString);
 
@@ -335,6 +341,8 @@ public class ExtensibleAutolinker
 
 	private class ContextRootResolver implements ResourceResolver
 	{
+		private final Charset UTF8 = Charset.forName("UTF-8");
+
 		@Override
 		public ResourceReference resolve(String src)
 		{
@@ -344,7 +352,7 @@ public class ExtensibleAutolinker
 		@Override
 		public ResourceReference resolveForCss(final String src)
 		{
-			return new ResourceReference("src")
+			return new ResourceReference(src)
 			{
 				@Override
 				public IResource getResource()
@@ -363,9 +371,9 @@ public class ExtensibleAutolinker
 								@Override
 								public void writeData(Attributes attributes) throws IOException
 								{
-									final StringResponse buffer = new StringResponse();
+									final ByteArrayResponse buffer = new ByteArrayResponse();
 									wrappedWriteCallback.writeData(new Attributes(attributes.getRequest(), buffer, attributes.getParameters()));
-									final String css = buffer.toString();
+									final String css = new String(buffer.getBytes(), UTF8);
 									final String processedCss = cssProcessor.process(css, null, src);
 									attributes.getResponse().write(processedCss);
 								}
