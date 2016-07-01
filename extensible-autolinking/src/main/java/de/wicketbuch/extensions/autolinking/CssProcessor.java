@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -21,6 +21,9 @@ import static org.apache.wicket.resource.CssUrlReplacer.EMBED_BASE64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.css.ICssCompressor;
 import org.apache.wicket.request.Url;
@@ -31,21 +34,26 @@ import org.apache.wicket.resource.IScopeAwareTextResourceProcessor;
 import org.apache.wicket.util.image.ImageUtil;
 
 /**
- * Created by calle on 01.07.16.
+ * An {@link ICssCompressor} that uses {@link ExtensibleAutolinker} for extended autolinking. Unfortunately, the default
+ * {@link CssUrlReplacer} shipped with Wicket is not very easily extensible, so parts of that class are copied here to
+ * provide both "classic" and extended autolinking.
  */
 class CssProcessor implements IScopeAwareTextResourceProcessor, ICssCompressor
 {
 	private static final Pattern URL_PATTERN = Pattern
 			.compile("url\\([ ]*['|\"]?([^ ]*?)['|\"]?[ ]*\\)");
 
+	@Nullable
 	private final ICssCompressor originalCssCompressor;
+	@Nonnull
 	private final ResourceResolvers resolvers;
 
-	CssProcessor(ICssCompressor originalCssCompressor, ResourceResolvers resolvers)
+	CssProcessor(ICssCompressor originalCssCompressor, @Nonnull ResourceResolvers resolvers)
 	{
 		this.resolvers = resolvers;
 		if (originalCssCompressor instanceof CssUrlReplacer)
 		{
+			// do not let original CssUrlReplacer run, because we duplicate its logic in this class.
 			this.originalCssCompressor = null;
 		}
 		else
@@ -55,8 +63,9 @@ class CssProcessor implements IScopeAwareTextResourceProcessor, ICssCompressor
 
 	}
 
+	@Nonnull
 	@Override
-	public String process(String input, Class<?> scope, String name)
+	public String process(String input, @Nullable Class<?> scope, @Nonnull String name)
 	{
 		if (originalCssCompressor instanceof IScopeAwareTextResourceProcessor)
 		{
@@ -135,6 +144,7 @@ class CssProcessor implements IScopeAwareTextResourceProcessor, ICssCompressor
 		return output.toString();
 	}
 
+	@Nullable
 	@Override
 	public String compress(String original)
 	{

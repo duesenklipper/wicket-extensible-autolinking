@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -16,12 +16,14 @@
  */
 package de.wicketbuch.extensions.autolinking;
 
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
- * Created by calle on 01.07.16.
+ * ResourceResolver working from the classpath root. Prefix "cp:/".
  */
 class ClasspathRootResolver extends ResourceResolver
 {
@@ -31,14 +33,16 @@ class ClasspathRootResolver extends ResourceResolver
 		super("cp:/");
 	}
 
+	@Nonnull
 	@Override
-	public ResourceReference resolve(String src)
+	public ResourceReference resolve(@Nonnull String src)
 	{
 		return new PackageResourceReference(_cp._.class, "../" + removePrefix(src));
 	}
 
+	@Nonnull
 	@Override
-	public ResourceReference resolveForCss(String src)
+	public ResourceReference resolveForCss(@Nonnull String src)
 	{
 		return new CssResourceReference(_cp._.class, "../" + removePrefix(src));
 	}

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -17,7 +17,8 @@
 package _cp;
 
 /**
- * Created by calle on 29.06.16.
+ * Dummy class used as anchor scope for accessing paths starting at the classpath root. {@link org.apache.wicket.request.resource.PackageResourceReference}
+ * does not allow references directly to the root package, so instead we use this together with ".." to get to the root.
  */
 public class _
 {

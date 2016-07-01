@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -16,6 +16,8 @@
  */
 package de.wicketbuch.extensions.autolinking;
 
+import javax.annotation.Nullable;
+
 import de.wicketbuch.extensions.autolinking.res.Scope;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.mock.MockApplication;
@@ -30,6 +32,7 @@ import org.junit.Test;
  */
 public class ExtensibleAutolinkerTest
 {
+	@Nullable
 	private static WicketTester tester;
 
 	@Test

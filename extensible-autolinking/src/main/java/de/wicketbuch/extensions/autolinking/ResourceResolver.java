@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -16,16 +16,19 @@
  */
 package de.wicketbuch.extensions.autolinking;
 
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
- * Created by calle on 01.07.16.
+ * Resolves paths with a particular prefix to ResourceReferences.
  */
 abstract class ResourceResolver
 {
+	@Nonnull
 	private final String urlPrefix;
 
-	protected ResourceResolver(String urlPrefix)
+	protected ResourceResolver(@Nonnull String urlPrefix)
 	{
 		if (!urlPrefix.endsWith(":/"))
 		{
@@ -34,16 +37,37 @@ abstract class ResourceResolver
 		this.urlPrefix = urlPrefix;
 	}
 
+	@Nonnull
 	String getUrlPrefix()
 	{
 		return urlPrefix;
 	}
 
+	/**
+	 * Resolves the path given to a ResourceReference.
+	 *
+	 * @param src path
+	 * @return ResourceReference
+	 */
 	abstract ResourceReference resolve(String src);
 
+	/**
+	 * Resolves the path given to a ResourceReference that is able to handle autolinking in CSS files. For CSS files
+	 * in the classpath, this will typically be {@link org.apache.wicket.request.resource.CssResourceReference}, which
+	 * does this automatically. {@link ContextRootResolver}, for example, will instead return a custom reference,
+	 * because {@link org.apache.wicket.request.resource.CssResourceReference} only works in the classpath.
+	 * @param src path
+	 * @return ResourceReference
+	 */
 	abstract ResourceReference resolveForCss(String src);
 
-	protected String removePrefix(String src)
+	/**
+	 * Remove the prefix used by this resolver from the given string.
+	 * @param src string
+	 * @return stripped string
+	 */
+	@Nonnull
+	protected String removePrefix(@Nonnull String src)
 	{
 		return src.substring(urlPrefix.length());
 	}

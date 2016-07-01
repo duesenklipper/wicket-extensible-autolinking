@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -19,6 +19,8 @@ package de.wicketbuch.extensions.autolinking;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.request.resource.ContextRelativeResource;
 import org.apache.wicket.request.resource.ContextRelativeResourceReference;
 import org.apache.wicket.request.resource.IResource;
@@ -26,7 +28,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.response.ByteArrayResponse;
 
 /**
- * Created by calle on 01.07.16.
+ * ResourceResolver working from the context root (your "webapp folder".) Prefix "ctx:/".
  */
 class ContextRootResolver extends ResourceResolver
 {
@@ -40,17 +42,20 @@ class ContextRootResolver extends ResourceResolver
 		this.cssProcessor = cssProcessor;
 	}
 
+	@Nonnull
 	@Override
-	public ResourceReference resolve(String src)
+	public ResourceReference resolve(@Nonnull String src)
 	{
 		return new ContextRelativeResourceReference(removePrefix(src));
 	}
 
+	@Nonnull
 	@Override
-	public ResourceReference resolveForCss(final String src)
+	public ResourceReference resolveForCss(@Nonnull final String src)
 	{
 		return new ResourceReference(src)
 		{
+			@Nonnull
 			@Override
 			public IResource getResource()
 			{
@@ -66,7 +71,7 @@ class ContextRootResolver extends ResourceResolver
 						rr.setWriteCallback(new WriteCallback()
 						{
 							@Override
-							public void writeData(Attributes attributes) throws IOException
+							public void writeData(@Nonnull Attributes attributes) throws IOException
 							{
 								final ByteArrayResponse buffer = new ByteArrayResponse();
 								wrappedWriteCallback.writeData(new Attributes(attributes.getRequest(), buffer, attributes.getParameters()));

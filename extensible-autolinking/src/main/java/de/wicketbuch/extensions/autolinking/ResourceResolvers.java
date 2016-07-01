@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -20,20 +20,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * Created by calle on 01.07.16.
+ * Manages {@link ResourceResolver}s.
  */
-public class ResourceResolvers
+class ResourceResolvers
 {
 	private final Map<String, ResourceResolver> resolvers = new HashMap<>();
 
-	public void add(ResourceResolver resolver)
+	void add(@Nonnull ResourceResolver resolver)
 	{
 		String prefix = resolver.getUrlPrefix();
 		resolvers.put(prefix, resolver);
 	}
 
-	public ResourceResolver getResolverForUrl(String src)
+	@Nullable
+	ResourceResolver getResolverForUrl(@Nullable String src)
 	{
 		if (src != null)
 		{
