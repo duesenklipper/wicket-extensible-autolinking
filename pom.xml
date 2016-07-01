@@ -117,13 +117,6 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/LICENSE</exclude>
-                        <exclude>**/keystore</exclude>
-                        <exclude>**/jetty*.xml</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -183,11 +176,11 @@
                         <header>${license.file}</header>
                         <excludes>
                             <exclude>src/test/java/log4j.properties</exclude>
-                            <exclude>README.md</exclude>
-                            <exclude>.gitignore</exclude>
-                            <exclude>.idea/</exclude>
+                            <exclude>**/*.css</exclude>
+                            <exclude>**/*.html</exclude>
+                            <exclude>**/src/test/jetty/**</exclude>
+                            <exclude>**/src/test/resources/keystore</exclude>
                         </excludes>
-                        <useDefaultExcludes>true</useDefaultExcludes>
                         <strictCheck>true</strictCheck>
                     </configuration>
                     <executions>

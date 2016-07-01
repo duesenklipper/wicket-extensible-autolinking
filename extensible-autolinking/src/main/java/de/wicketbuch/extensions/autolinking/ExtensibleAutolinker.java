@@ -300,7 +300,7 @@ public class ExtensibleAutolinker
 		ResourceReference resolveForCss(String src);
 	}
 
-	private class ClasspathResolver implements ResourceResolver
+	private static class ClasspathResolver implements ResourceResolver
 	{
 		private final Class<?> scope;
 		private final String prefix;
@@ -324,7 +324,7 @@ public class ExtensibleAutolinker
 		}
 	}
 
-	private class ClasspathRootResolver implements ResourceResolver
+	private static class ClasspathRootResolver implements ResourceResolver
 	{
 		@Override
 		public ResourceReference resolve(String src)
