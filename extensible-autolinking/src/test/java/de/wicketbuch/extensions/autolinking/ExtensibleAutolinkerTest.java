@@ -109,6 +109,12 @@ public class ExtensibleAutolinkerTest
 		tester.assertContains("href=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.css\"");
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void webinfPathsAreBlocked() throws Exception
+	{
+		tester.startPage(IllegalWebInfPathPage.class);
+	}
+
 	public static class RegularAutolinkingPage extends WebPage
 	{
 		// no code, just template, see html file
@@ -125,6 +131,11 @@ public class ExtensibleAutolinkerTest
 	}
 
 	public static class CustomScopeAutolinkingPage extends WebPage
+	{
+		// no code, just template, see html file
+	}
+
+	public static class IllegalWebInfPathPage extends WebPage
 	{
 		// no code, just template, see html file
 	}
