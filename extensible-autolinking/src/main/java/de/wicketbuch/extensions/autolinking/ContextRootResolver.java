@@ -16,13 +16,11 @@
  */
 package de.wicketbuch.extensions.autolinking;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
 
 import org.apache.wicket.request.resource.ContextRelativeResource;
-import org.apache.wicket.request.resource.ContextRelativeResourceReference;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.response.ByteArrayResponse;
@@ -44,15 +42,33 @@ class ContextRootResolver extends ResourceResolver
 
 	@Nonnull
 	@Override
-	public ResourceReference resolve(@Nonnull String src)
+	public ResourceReference resolve(@Nonnull final String src)
 	{
-		return new ContextRelativeResourceReference(removePrefix(src));
+		rejectIllegalPaths(src);
+		return new ResourceReference(src)
+		{
+			@Override
+			public IResource getResource()
+			{
+				return new ContextRelativeResource(removePrefix(src));
+			}
+		};
+	}
+
+	private void rejectIllegalPaths(String path)
+	{
+		if (path.toUpperCase().contains("WEB-INF"))
+		{
+			throw new IllegalArgumentException("context resources cannot be taken from WEB-INF! offending path: " +
+					path);
+		}
 	}
 
 	@Nonnull
 	@Override
 	public ResourceReference resolveForCss(@Nonnull final String src)
 	{
+		rejectIllegalPaths(src);
 		return new ResourceReference(src)
 		{
 			@Nonnull
@@ -71,12 +87,12 @@ class ContextRootResolver extends ResourceResolver
 						rr.setWriteCallback(new WriteCallback()
 						{
 							@Override
-							public void writeData(@Nonnull Attributes attributes) throws IOException
+							public void writeData(@Nonnull Attributes attributes)
 							{
 								final ByteArrayResponse buffer = new ByteArrayResponse();
 								wrappedWriteCallback.writeData(new Attributes(attributes.getRequest(), buffer, attributes.getParameters()));
 								final String css = new String(buffer.getBytes(), UTF8);
-								final String processedCss = cssProcessor.process(css, null, src);
+								final String processedCss = cssProcessor.compress(css);
 								attributes.getResponse().write(processedCss);
 							}
 						});

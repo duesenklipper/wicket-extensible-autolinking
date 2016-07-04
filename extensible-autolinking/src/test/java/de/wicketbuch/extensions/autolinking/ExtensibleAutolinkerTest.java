@@ -53,7 +53,7 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ClasspathRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test" +
 				".css");
-		tester.assertContains("\\.regular.*background: url\\('\\./test\\.png'\\);");
+		tester.assertContains("\\.regular.*background: url\\('../../../../../../../org.apache.wicket.Application/ctx:/res/test.png'\\);");
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ClasspathRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test.css");
 		tester.assertContains(".ctxroot \\{ background: url\\('../../../../../../../org.apache.wicket" +
-				".Application/res/test.png'\\); \\}");
+				".Application/ctx:/res/test.png'\\); \\}");
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class ExtensibleAutolinkerTest
 		// org.apache.wicket.request.resource.ContextRelativeResource.
 		tester.startPage(ContextRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/org.apache.wicket.Application/ctx:/res/test.css");
-		tester.assertContains(".ctxroot \\{ background: url\\('../../res/test.png'\\); \\}");
+		tester.assertContains(".ctxroot \\{ background: url\\('./test.png'\\); \\}");
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ContextRootAutolinkingPage.class);
 		// contextroot resources are available with Application scope
 		// img src autolinking
-		tester.assertContains("src=\"../resource/org.apache.wicket.Application/res/test.png\"");
+		tester.assertContains("src=\"../resource/org.apache.wicket.Application/ctx:/res/test.png\"");
 		// stylesheet link href autolinking
 		tester.assertContains("href=\"../resource/org.apache.wicket.Application/ctx:/res/test.css\"");
 	}
@@ -107,6 +107,12 @@ public class ExtensibleAutolinkerTest
 		tester.assertContains("src=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.png\"");
 		// stylesheet link href autolinking
 		tester.assertContains("href=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.css\"");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void webinfPathsAreBlocked() throws Exception
+	{
+		tester.startPage(IllegalWebInfPathPage.class);
 	}
 
 	public static class RegularAutolinkingPage extends WebPage
@@ -125,6 +131,11 @@ public class ExtensibleAutolinkerTest
 	}
 
 	public static class CustomScopeAutolinkingPage extends WebPage
+	{
+		// no code, just template, see html file
+	}
+
+	public static class IllegalWebInfPathPage extends WebPage
 	{
 		// no code, just template, see html file
 	}
