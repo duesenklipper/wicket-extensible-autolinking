@@ -19,6 +19,7 @@ package de.wicketbuch.extensions.autolinking;
 import de.wicketbuch.extensions.autolinking.otherscope.ResourceScope;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.resource.CssUrlReplacer;
 
 /**
@@ -45,6 +46,9 @@ public class WicketApplication extends WebApplication
 		super.init();
 		getMarkupSettings().setAutomaticLinking(true);
 		getResourceSettings().setCssCompressor(new CssUrlReplacer());
+
+		// for test only:
+		getResourceSettings().setCachingStrategy(new NoOpResourceCachingStrategy());
 
 
 		final ExtensibleAutolinker autolinker = ExtensibleAutolinker.configure(this);

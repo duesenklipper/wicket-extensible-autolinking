@@ -46,13 +46,24 @@ class ContextRootResolver extends ResourceResolver
 	@Override
 	public ResourceReference resolve(@Nonnull String src)
 	{
+		rejectIllegalPaths(src);
 		return new ContextRelativeResourceReference(removePrefix(src));
+	}
+
+	private void rejectIllegalPaths(String path)
+	{
+		if (path.toUpperCase().contains("WEB-INF"))
+		{
+			throw new IllegalArgumentException("context resources cannot be taken from WEB-INF! offending path: " +
+					path);
+		}
 	}
 
 	@Nonnull
 	@Override
 	public ResourceReference resolveForCss(@Nonnull final String src)
 	{
+		rejectIllegalPaths(src);
 		return new ResourceReference(src)
 		{
 			@Nonnull
