@@ -45,7 +45,7 @@ class ContextRootResolver extends ResourceResolver
 	public ResourceReference resolve(@Nonnull final String src)
 	{
 		rejectIllegalPaths(src);
-		return new ResourceReference(src)
+		return new ResourceReference(removePrefix(src))
 		{
 			@Override
 			public IResource getResource()

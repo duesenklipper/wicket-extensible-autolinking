@@ -25,6 +25,7 @@ import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -48,12 +49,13 @@ public class ExtensibleAutolinkerTest
 	}
 
 	@Test
+	@Ignore("wicket 1.5 doesn't have regular autolinking in CSS files")
 	public void regularAutolinkingInAutolinkedCssResource() throws Exception
 	{
 		tester.startPage(ClasspathRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test" +
 				".css");
-		tester.assertContains("\\.regular.*background: url\\('../../../../../../../org.apache.wicket.Application/ctx:/res/test.png'\\);");
+		tester.assertContains("\\.regular.*background: url\\('\\./test\\.png'\\);");
 	}
 
 	@Test
@@ -62,7 +64,7 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ClasspathRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test.css");
 		tester.assertContains(".ctxroot \\{ background: url\\('../../../../../../../org.apache.wicket" +
-				".Application/ctx:/res/test.png'\\); \\}");
+				".Application/res/test.png'\\); \\}");
 	}
 
 	@Test
@@ -74,7 +76,7 @@ public class ExtensibleAutolinkerTest
 		// org.apache.wicket.request.resource.ContextRelativeResource.
 		tester.startPage(ContextRootAutolinkingPage.class);
 		tester.executeUrl("/context/servlet/wicket/resource/org.apache.wicket.Application/ctx:/res/test.css");
-		tester.assertContains(".ctxroot \\{ background: url\\('./test.png'\\); \\}");
+		tester.assertContains(".ctxroot \\{ background: url\\('../../res/test.png'\\); \\}");
 	}
 
 	@Test
@@ -93,7 +95,7 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ContextRootAutolinkingPage.class);
 		// contextroot resources are available with Application scope
 		// img src autolinking
-		tester.assertContains("src=\"../resource/org.apache.wicket.Application/ctx:/res/test.png\"");
+		tester.assertContains("src=\"../resource/org.apache.wicket.Application/res/test.png\"");
 		// stylesheet link href autolinking
 		tester.assertContains("href=\"../resource/org.apache.wicket.Application/ctx:/res/test.css\"");
 	}
