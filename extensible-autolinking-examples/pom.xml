@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>de.wicketbuch.extensions</groupId>
 		<artifactId>extensible-autolinking-parent</artifactId>
-		<version>1.0.wicket7-SNAPSHOT</version>
+		<version>1.0.wicket6-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -39,7 +39,6 @@
 		</license>
 	</licenses>
 	<properties>
-		<log4j.version>2.5</log4j.version>
 		<main.basedir>..</main.basedir>
 	</properties>
 	<dependencies>
@@ -64,14 +63,8 @@
 
 		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
 		</dependency>
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
@@ -123,19 +116,6 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>

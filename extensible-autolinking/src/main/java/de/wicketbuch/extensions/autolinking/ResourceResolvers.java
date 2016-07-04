@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 class ResourceResolvers
 {
-	private final Map<String, ResourceResolver> resolvers = new HashMap<>();
+	private final Map<String, ResourceResolver> resolvers = new HashMap<String, ResourceResolver>();
 
 	void add(@Nonnull ResourceResolver resolver)
 	{

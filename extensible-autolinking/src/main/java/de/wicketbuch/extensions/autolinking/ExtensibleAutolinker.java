@@ -170,7 +170,7 @@ public class ExtensibleAutolinker
 				{
 					tag.setAutoComponentTag(true);
 					tag.setModified(true);
-					tag.setId(AUTOLINK_ID + getRequestUniqueId());
+					tag.setId(AUTOLINK_ID);
 				}
 				return tag;
 			}
