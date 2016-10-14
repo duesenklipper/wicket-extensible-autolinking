@@ -66,3 +66,6 @@ prefix "`sc:/`", in addition to the.
 
 Make sure you choose the correct version for the version of Wicket you are
 using, they are suffixed with `.wicket5`, `.wicket6`, `.wicket7` respectively.
+
+This project uses [Semantic Versioning](http://semver.org/), so you can rely on
+things not breaking within a major version.
