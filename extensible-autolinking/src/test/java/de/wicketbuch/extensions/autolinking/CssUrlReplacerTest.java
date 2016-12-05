@@ -26,10 +26,8 @@ import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCac
 import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
 import org.apache.wicket.request.resource.caching.ResourceUrl;
 import org.apache.wicket.request.resource.caching.version.MessageDigestResourceVersion;
-import org.apache.wicket.resource.CssUrlReplacer;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -75,7 +73,7 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url('http://example.com/some.img');}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(processed, is(input));
@@ -87,10 +85,15 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url(data:image/gif;base64,R0lGODlhEAAQAMQAAORHH);}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(processed, is(input));
+	}
+
+	private CssProcessor newProcessor()
+	{
+		return ExtensibleAutolinker.configure(WebApplication.get()).cssProcessor;
 	}
 
 	@Test
@@ -99,7 +102,7 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url('/some.img');}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(processed, is(input));
@@ -111,12 +114,12 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url('some.img');}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(
 			processed,
-			is(".class {background-image: url('./wicket/resource/org.apache.wicket.resource.CssUrlReplacerTest/res/css/some.img" +
+			is(".class {background-image: url('./wicket/resource/de.wicketbuch.extensions.autolinking.CssUrlReplacerTest/res/css/some.img" +
 				DECORATION_SUFFIX + "');}"));
 	}
 
@@ -126,12 +129,12 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url(\"some.img\");}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(
 			processed,
-			is(".class {background-image: url('./wicket/resource/org.apache.wicket.resource.CssUrlReplacerTest/res/css/some.img" +
+			is(".class {background-image: url('./wicket/resource/de.wicketbuch.extensions.autolinking.CssUrlReplacerTest/res/css/some.img" +
 				DECORATION_SUFFIX + "');}"));
 	}
 
@@ -141,12 +144,12 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url('../images/some.img');}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(
 			processed,
-			is(".class {background-image: url('./wicket/resource/org.apache.wicket.resource.CssUrlReplacerTest/res/images/some.img" +
+			is(".class {background-image: url('./wicket/resource/de.wicketbuch.extensions.autolinking.CssUrlReplacerTest/res/images/some.img" +
 				DECORATION_SUFFIX + "');}"));
 	}
 
@@ -156,12 +159,12 @@ public class CssUrlReplacerTest
 		String input = ".class {background-image: url('./images/some.img');}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(
 			processed,
-			is(".class {background-image: url('./wicket/resource/org.apache.wicket.resource.CssUrlReplacerTest/res/css/images/some.img" +
+			is(".class {background-image: url('./wicket/resource/de.wicketbuch.extensions.autolinking.CssUrlReplacerTest/res/css/images/some.img" +
 				DECORATION_SUFFIX + "');}"));
 	}
 
@@ -169,9 +172,9 @@ public class CssUrlReplacerTest
 	public void base64EncodedImage()
 	{
 		String input = ".class {background-image: url('Beer.gif?embedBase64');}";
-		Class<?> scope = ImageTest.class;
+		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(
 			processed,
@@ -184,7 +187,7 @@ public class CssUrlReplacerTest
 		String input = ".class {\n" + "a: url('../images/a.img');\n" + "b: url('./b.img');\n" + "}";
 		Class<?> scope = CssUrlReplacerTest.class;
 		String cssRelativePath = "res/css/some.css";
-		CssUrlReplacer replacer = new CssUrlReplacer();
+		CssProcessor replacer = newProcessor();
 
 		String processed = replacer.process(input, scope, cssRelativePath);
 		assertThat(processed, containsString("CssUrlReplacerTest/res/images/a.img" +
