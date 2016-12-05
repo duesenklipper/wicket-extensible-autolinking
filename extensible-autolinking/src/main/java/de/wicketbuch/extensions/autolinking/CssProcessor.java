@@ -106,6 +106,11 @@ class CssProcessor implements IScopeAwareTextResourceProcessor, ICssCompressor
 				{
 					processedUrl = imageCandidateUrl.toString();
 				}
+				else if (imageCandidateUrl.isDataUrl())
+				{
+					embedded = true;
+					processedUrl = imageCandidateUrl.toString();
+				}
 				else
 				{
 					// relativize against the url for the containing CSS file

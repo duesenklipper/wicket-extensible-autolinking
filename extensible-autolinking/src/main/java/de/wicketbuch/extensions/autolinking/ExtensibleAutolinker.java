@@ -69,7 +69,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 public class ExtensibleAutolinker
 {
 	@Nonnull
-	private final CssProcessor cssProcessor;
+	/* package private for testing */ final CssProcessor cssProcessor;
 
 	/**
 	 * Activate the ExtensibleAutolinker for the given Wicket application.
