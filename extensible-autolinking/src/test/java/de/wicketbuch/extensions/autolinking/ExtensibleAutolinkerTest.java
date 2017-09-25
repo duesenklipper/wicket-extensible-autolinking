@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
+ * Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
