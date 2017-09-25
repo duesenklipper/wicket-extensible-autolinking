@@ -1,8 +1,4 @@
-**Current version**: 1.1.1.wicket{5|6|7} for Wicket 1.5.x, 6.x, 7.x
-
-**New:** These artifacts are now on Maven Central, no more custom repository 
-needed.
-
+**Current version**: 1.2.0.wicket{6|7} for Wicket 6.x, 7.x ([CHANGELOG](CHANGELOG-1.x.md))
 
 # Extensible Autolinking for Wicket
 
