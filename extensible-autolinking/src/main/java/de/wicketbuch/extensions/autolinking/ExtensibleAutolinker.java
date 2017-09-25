@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -160,6 +160,8 @@ public class ExtensibleAutolinker
 	{
 		return new AbstractMarkupFilter(resource)
 		{
+			private long nextId = 0;
+
 			@Nonnull
 			@Override
 			protected MarkupElement onComponentTag(@Nonnull ComponentTag tag) throws ParseException
@@ -171,6 +173,7 @@ public class ExtensibleAutolinker
 					tag.setAutoComponentTag(true);
 					tag.setModified(true);
 					tag.setId(AUTOLINK_ID + getRequestUniqueId());
+					tag.setAutoComponentTag(true);
 				}
 				return tag;
 			}

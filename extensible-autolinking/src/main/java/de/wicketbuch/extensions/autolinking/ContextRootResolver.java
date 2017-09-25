@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *

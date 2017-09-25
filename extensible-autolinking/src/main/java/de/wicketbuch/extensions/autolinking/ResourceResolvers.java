@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 class ResourceResolvers
 {
-	private final Map<String, ResourceResolver> resolvers = new HashMap<>();
+	private final Map<String, ResourceResolver> resolvers = new HashMap<String, ResourceResolver>();
 
 	void add(@Nonnull ResourceResolver resolver)
 	{
