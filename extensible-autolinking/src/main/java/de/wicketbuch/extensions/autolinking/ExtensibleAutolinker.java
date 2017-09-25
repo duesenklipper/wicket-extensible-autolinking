@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
+ * Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
  * and possibly other extensible-autolinking contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 public class ExtensibleAutolinker
 {
 	@Nonnull
-	private final CssProcessor cssProcessor;
+	/* package private for testing */ final CssProcessor cssProcessor;
 
 	/**
 	 * Activate the ExtensibleAutolinker for the given Wicket application.

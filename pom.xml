@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2016 Carl-Eric Menzel <cmenzel@wicketbuch.de>
+    Copyright (C) 2016-2017 Carl-Eric Menzel <cmenzel@wicketbuch.de>
     and possibly other extensible-autolinking contributors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@
     <parent>
         <groupId>de.duesenklipper.maven</groupId>
         <artifactId>duesenklipper-parent</artifactId>
-        <version>1.3</version>
+        <version>1.5</version>
     </parent>
 
     <name>extensible-autolinking-parent</name>
@@ -54,7 +54,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>${maven.compiler.target}</maven.compiler.source>
         <main.basedir>${project.basedir}</main.basedir>
-        <wicket.version>6.23.0</wicket.version>
+        <wicket.version>6.27.1</wicket.version>
         <jetty9.version>9.2.13.v20150730</jetty9.version>
         <slf4j.version>1.7.21</slf4j.version>
     </properties>
@@ -102,6 +102,22 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>3.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
