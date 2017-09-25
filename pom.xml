@@ -29,7 +29,7 @@
     <parent>
         <groupId>de.duesenklipper.maven</groupId>
         <artifactId>duesenklipper-parent</artifactId>
-        <version>1.5</version>
+        <version>1.7</version>
     </parent>
 
     <name>extensible-autolinking-parent</name>
@@ -57,6 +57,7 @@
         <wicket.version>6.27.1</wicket.version>
         <jetty9.version>9.2.13.v20150730</jetty9.version>
         <slf4j.version>1.7.21</slf4j.version>
+        <clirr.compare.version>1.1.1.wicket6</clirr.compare.version>
     </properties>
 
     <modules>
