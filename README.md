@@ -1,4 +1,4 @@
-**Current version**: 1.2.0.wicket{6|7} for Wicket 6.x, 7.x ([CHANGELOG](CHANGELOG-1.x.md))
+**Current version**: 1.3.0.wicket{6|7} for Wicket 6.x, 7.x ([CHANGELOG](CHANGELOG-1.x.md))
 
 # Extensible Autolinking for Wicket
 
@@ -11,6 +11,10 @@ of context resources, because that way components are much more easily
 packageable. There are situations where one might want to still reference
 context resources, such as migration scenarios where some resources might still
 need to live in the webapp context for the sake of legacy components.
+
+You only get to use the predefined tags and attributes for the autolinking, such as 
+```img```/```src``` or ```a```/```href```. With Extensible Autolinker, you can add
+your own tag/attribute combinations, for example ```object```/```data```.
 
 Unfortunately, Wicket autolinking also only works with relative paths, because
 absolute paths (starting with "`/`") are rejected. Again, in general, this is a
@@ -51,6 +55,10 @@ use to add additional classpath scopes:
 
 You can now refer to paths relative to SomeClass in the classpath by using the
 prefix "`sc:/`", in addition to the.
+
+You can also add your own tag/attribute combinations:
+
+    autolinker.setAttributesFor("object", "data");
 
 ## Maven coordinates
 

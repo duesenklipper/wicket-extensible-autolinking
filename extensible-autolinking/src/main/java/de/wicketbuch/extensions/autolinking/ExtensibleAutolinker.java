@@ -110,6 +110,14 @@ public class ExtensibleAutolinker
 
 	private final Map<String, String[]> tagsToAttributes = new HashMap<String, String[]>();
 
+	/**
+	 * Add a mapping for a tag name and its attributes that should be autolinked.
+	 *
+	 * @param tagName        the tag name, e.g. {@code img} or {@code object}
+	 * @param attributeNames the attribute names whose contents should be autolinked, e.g. {@code
+	 *                       href} or {@code data}
+	 * @return {@code this}, for method chaining
+	 */
 	public ExtensibleAutolinker setAttributesFor(String tagName, String... attributeNames)
 	{
 		tagsToAttributes.put(tagName, attributeNames);
