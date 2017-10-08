@@ -115,6 +115,42 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(IllegalWebInfPathPage.class);
 	}
 
+	@Test
+	public void customAttributeDoesNotLinkToMissingPackageResource()
+	{
+		tester.startPage(CustomTagsAndAttributesPage.class);
+		tester.dumpPage();
+		tester.assertContains("<object data=\"missing.png\"/>");
+	}
+
+	@Test
+	public void customAttributeDoesNotInterfereWithExistingAutolinker()
+	{
+		tester.startPage(CustomTagsAndAttributesPage.class);
+		tester.dumpPage();
+		tester.assertContains(
+				"<img src=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test.png\"/>");
+	}
+
+	@Test
+	public void customAttributeLinksToResourceInSubfolder()
+	{
+		tester.startPage(CustomTagsAndAttributesPage.class);
+		tester.dumpPage();
+		tester.assertContains(
+				"<object data=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/res/insubfolder.png\"/>");
+	}
+
+	@Test
+	public void customAttributeLinksToExistingPackageResource()
+	{
+		tester.startPage(CustomTagsAndAttributesPage.class);
+		tester.dumpPage();
+		tester.assertContains(
+				"<object data=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test.png\"/>");
+	}
+
+
 	public static class RegularAutolinkingPage extends WebPage
 	{
 		// no code, just template, see html file
@@ -140,6 +176,11 @@ public class ExtensibleAutolinkerTest
 		// no code, just template, see html file
 	}
 
+	public static class CustomTagsAndAttributesPage extends WebPage
+	{
+		// no code, just template, see html file
+	}
+
 
 	@BeforeClass
 	public static void setupTester()
@@ -152,6 +193,7 @@ public class ExtensibleAutolinkerTest
 				super.init();
 				ExtensibleAutolinker autolinker = ExtensibleAutolinker.configure(this);
 				autolinker.addScopePrefix(Scope.class, "testscope");
+				autolinker.setAttributesFor("object", "data");
 			}
 		}, new File("src/test/webapp").getAbsolutePath());
 	}
