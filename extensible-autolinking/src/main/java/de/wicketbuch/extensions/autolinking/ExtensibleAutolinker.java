@@ -19,6 +19,8 @@ package de.wicketbuch.extensions.autolinking;
 import static org.apache.wicket.markup.parser.filter.WicketLinkTagHandler.AUTOLINK_ID;
 
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,9 @@ import org.apache.wicket.markup.parser.AbstractMarkupFilter;
 import org.apache.wicket.markup.parser.IMarkupFilter;
 import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
@@ -68,8 +73,10 @@ import org.apache.wicket.request.resource.ResourceReference;
  */
 public class ExtensibleAutolinker
 {
+	static final String EXTENSIBLE_AUTOLINK_PREFIX = "_extensible_autolink_";
+
 	@Nonnull
-	/* package private for testing */ final CssProcessor cssProcessor;
+			/* package private for testing */ final CssProcessor cssProcessor;
 
 	/**
 	 * Activate the ExtensibleAutolinker for the given Wicket application.
@@ -80,7 +87,8 @@ public class ExtensibleAutolinker
 	@Nonnull
 	public static ExtensibleAutolinker configure(@Nonnull WebApplication application)
 	{
-		final ICssCompressor originalCssCompressor = application.getResourceSettings().getCssCompressor();
+		final ICssCompressor originalCssCompressor =
+				application.getResourceSettings().getCssCompressor();
 		final ExtensibleAutolinker autolinker = new ExtensibleAutolinker(originalCssCompressor);
 		application.getMarkupSettings().setMarkupFactory(new MarkupFactory()
 		{
@@ -100,6 +108,14 @@ public class ExtensibleAutolinker
 		return autolinker;
 	}
 
+	private final Map<String, String[]> tagsToAttributes = new HashMap<String, String[]>();
+
+	public ExtensibleAutolinker setAttributesFor(String tagName, String... attributeNames)
+	{
+		tagsToAttributes.put(tagName, attributeNames);
+		return this;
+	}
+
 	/**
 	 * @return an {@link IComponentResolver} which actually resolves the paths to proper URLs.
 	 */
@@ -110,45 +126,103 @@ public class ExtensibleAutolinker
 		{
 			@Nullable
 			@Override
-			public Component resolve(MarkupContainer container, MarkupStream markupStream, @Nonnull ComponentTag tag)
+			public Component resolve(MarkupContainer container, MarkupStream markupStream,
+			                         @Nonnull ComponentTag tag)
 			{
-				String src = tag.getAttribute("src");
-				final String attribute;
-				if (src != null)
+				if (tag.getId() != null && tag.getId().startsWith(AUTOLINK_ID))
 				{
-					attribute = "src";
-				}
-				else
-				{
-					src = tag.getAttribute("href");
-					attribute = "href";
-				}
-
-				final ResourceResolver resolver = resolvers.getResolverForUrl(src);
-				if (resolver != null)
-				{
-					final ResourceReference resourceReference;
-					if (tag.getName().equals("link") && "stylesheet".equals(tag.getAttribute("rel")))
+					String[] attributeNames = tagsToAttributes.get(tag.getName());
+					if (attributeNames != null)
 					{
-						resourceReference = resolver.resolveForCss(src);
-					}
-					else
-					{
-						resourceReference = resolver.resolve(src);
-					}
-					return new WebMarkupContainer(tag.getId())
-					{
-						@Override
-						protected void onComponentTag(@Nonnull ComponentTag tag)
+						String src = null;
+						String attributeName = null;
+						for (String possibleAttributeName : attributeNames)
 						{
-							super.onComponentTag(tag);
-							tag.put(attribute, urlFor(resourceReference, null));
+							src = tag.getAttribute(possibleAttributeName);
+							if (src != null)
+							{
+								attributeName = possibleAttributeName;
+								break;
+							}
 						}
-					};
+
+						final ResourceResolver resolver = resolvers.getResolverForUrl(src);
+						if (resolver != null)
+						{
+							final ResourceReference resourceReference;
+							if (tag.getName().equals("link") &&
+									"stylesheet".equals(tag.getAttribute("rel")))
+							{
+								resourceReference = resolver.resolveForCss(src);
+							}
+							else
+							{
+								resourceReference = resolver.resolve(src);
+							}
+							return new ResourceReferenceAutoLink(tag.getId(), attributeName, resourceReference);
+						} else {
+							return new ResourceReferenceAutoLink(tag.getId(), container, attributeName, src);
+						}
+					}
 				}
 				return null;
 			}
 		};
+	}
+
+	/**
+	 * Adapted from org.apache.wicket.markup.resolver.AutoLinkResolver.ResourceReferenceAutolink,
+	 * licensed under the Apache 2.0 license.
+	 */
+	private static class ResourceReferenceAutoLink extends WebMarkupContainer
+			implements IComponentResolver
+	{
+		private final String attributeName;
+		private final ResourceReference resourceReference;
+
+		ResourceReferenceAutoLink(String id, String attributeName, ResourceReference resourceReference)
+		{
+			super(id);
+			this.attributeName = attributeName;
+			this.resourceReference = resourceReference;
+		}
+
+		public ResourceReferenceAutoLink(String id, MarkupContainer parent,
+		                                 String attributeName, String possibleResourcePath)
+		{
+			super(id);
+			this.attributeName = attributeName;
+			if (PackageResource.exists(parent.getClass(), possibleResourcePath, parent.getLocale(),
+					parent.getStyle(), parent.getVariation()))
+			{
+				resourceReference =
+						new PackageResourceReference(parent.getClass(), possibleResourcePath,
+								parent.getLocale(), parent.getStyle(), parent.getVariation());
+			}
+			else
+			{
+				resourceReference = null;
+			}
+		}
+
+		@Override
+		protected void onComponentTag(ComponentTag tag)
+		{
+			super.onComponentTag(tag);
+			if (resourceReference != null)
+			{
+				final CharSequence resourceUrl =
+						RequestCycle.get().urlFor(resourceReference, null);
+				tag.put(attributeName, resourceUrl);
+			}
+		}
+
+		@Override
+		public Component resolve(MarkupContainer container, MarkupStream markupStream,
+		                         ComponentTag tag)
+		{
+			return getParent().get(tag.getId());
+		}
 	}
 
 	/**
@@ -166,14 +240,28 @@ public class ExtensibleAutolinker
 			@Override
 			protected MarkupElement onComponentTag(@Nonnull ComponentTag tag) throws ParseException
 			{
-				final String src = tag.getAttribute("src") != null ? tag.getAttribute("src") : tag.getAttribute("href");
-				final ResourceResolver resolver = resolvers.getResolverForUrl(src);
-				if (resolver != null)
+				if (tag.getId() == null)
 				{
-					tag.setAutoComponentTag(true);
-					tag.setModified(true);
-					tag.setId(AUTOLINK_ID + getRequestUniqueId());
-					tag.setAutoComponentTag(true);
+					final String[] attributeNames = tagsToAttributes.get(tag.getName());
+					if (attributeNames != null)
+					{
+						String src = null;
+						for (String attributeName : attributeNames)
+						{
+							src = tag.getAttribute(attributeName);
+							if (src != null)
+							{
+								break;
+							}
+						}
+						if (src != null)
+						{
+							tag.setAutoComponentTag(true);
+							tag.setModified(true);
+							tag.setId(AUTOLINK_ID + getRequestUniqueId());
+							tag.setAutoComponentTag(true);
+						}
+					}
 				}
 				return tag;
 			}
@@ -188,6 +276,11 @@ public class ExtensibleAutolinker
 		cssProcessor = new CssProcessor(originalCssCompressor, resolvers);
 		resolvers.add(new ClasspathRootResolver());
 		resolvers.add(new ContextRootResolver(cssProcessor));
+		setAttributesFor("link", "href");
+		setAttributesFor("script", "src");
+		setAttributesFor("img", "src");
+		setAttributesFor("input", "src");
+		setAttributesFor("embed", "src");
 	}
 
 	/**
