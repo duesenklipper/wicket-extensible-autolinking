@@ -1,4 +1,4 @@
-**Current version**: 1.3.0.wicket{6|7} for Wicket 6.x, 7.x ([CHANGELOG](CHANGELOG-1.x.md))
+**Current version**: 1.3.0.wicket{6|7|8} for Wicket 6.x, 7.x, 8.x ([CHANGELOG](CHANGELOG-1.x.md))
 
 # Extensible Autolinking for Wicket
 
