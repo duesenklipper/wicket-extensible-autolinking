@@ -150,6 +150,15 @@ public class ExtensibleAutolinkerTest
 				"<object data=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test.png\"/>");
 	}
 
+	@Test
+	public void customAttributeWorksWithXmlNamespace()
+	{
+		tester.startPage(CustomTagsAndAttributesPage.class);
+		tester.dumpPage();
+		tester.assertContains(
+				"<use xlink:href=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test.png\"></use>");
+	}
+
 
 	public static class RegularAutolinkingPage extends WebPage
 	{
@@ -194,6 +203,7 @@ public class ExtensibleAutolinkerTest
 				ExtensibleAutolinker autolinker = ExtensibleAutolinker.configure(this);
 				autolinker.addScopePrefix(Scope.class, "testscope");
 				autolinker.setAttributesFor("object", "data");
+				autolinker.setAttributesFor("use", "xlink:href");
 			}
 		}, new File("src/test/webapp").getAbsolutePath());
 	}
