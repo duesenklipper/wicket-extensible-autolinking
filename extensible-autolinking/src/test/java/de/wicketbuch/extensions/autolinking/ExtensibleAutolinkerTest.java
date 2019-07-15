@@ -83,6 +83,8 @@ public class ExtensibleAutolinkerTest
 		tester.startPage(ClasspathRootAutolinkingPage.class);
 		// img src autolinking
 		tester.assertContains("src=\"../resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test.png\"");
+		// do not mangle hash anchors
+		tester.assertContains("src=\"../resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test.png#somehash\"");
 		// stylesheet link href autolinking
 		tester.assertContains("href=\"../resource/_cp._/::/de/wicketbuch/extensions/autolinking/res/test.css\"");
 	}
@@ -105,6 +107,7 @@ public class ExtensibleAutolinkerTest
 		// contextroot resources are available with Application scope
 		// img src autolinking
 		tester.assertContains("src=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.png\"");
+		tester.assertContains("src=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.png#someanchor\"");
 		// stylesheet link href autolinking
 		tester.assertContains("href=\"../resource/de.wicketbuch.extensions.autolinking.res.Scope/test.css\"");
 	}
@@ -157,6 +160,9 @@ public class ExtensibleAutolinkerTest
 		tester.dumpPage();
 		tester.assertContains(
 				"<use xlink:href=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test.png\"></use>");
+		tester.assertContains(
+				"<use xlink:href=\"../resource/de.wicketbuch.extensions.autolinking.ExtensibleAutolinkerTest\\$CustomTagsAndAttributesPage/test" +
+						".png#someanchor\"></use>");
 	}
 
 

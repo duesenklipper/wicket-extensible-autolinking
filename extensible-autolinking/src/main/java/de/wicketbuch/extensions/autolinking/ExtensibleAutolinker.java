@@ -16,15 +16,6 @@
  */
 package de.wicketbuch.extensions.autolinking;
 
-import static org.apache.wicket.markup.parser.filter.WicketLinkTagHandler.AUTOLINK_ID;
-
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -44,6 +35,14 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.wicket.markup.parser.filter.WicketLinkTagHandler.AUTOLINK_ID;
 
 /**
  * The {@link ExtensibleAutolinker} allows additional autolinking in HTML and CSS files. Traditional Wicket autolinking
@@ -73,10 +72,8 @@ import org.apache.wicket.request.resource.ResourceReference;
  */
 public class ExtensibleAutolinker
 {
-	static final String EXTENSIBLE_AUTOLINK_PREFIX = "_extensible_autolink_";
-
 	@Nonnull
-			/* package private for testing */ final CssProcessor cssProcessor;
+	/* package private for testing */ final CssProcessor cssProcessor;
 
 	/**
 	 * Activate the ExtensibleAutolinker for the given Wicket application.
@@ -154,6 +151,10 @@ public class ExtensibleAutolinker
 							}
 						}
 
+						final String[] split = src.split("#", 2);
+						src = split[0];
+						String anchor = split.length > 1 ? split[1] : null;
+
 						final ResourceResolver resolver = resolvers.getResolverForUrl(src);
 						if (resolver != null)
 						{
@@ -167,9 +168,9 @@ public class ExtensibleAutolinker
 							{
 								resourceReference = resolver.resolve(src);
 							}
-							return new ResourceReferenceAutoLink(tag.getId(), attributeName, resourceReference);
+							return new ResourceReferenceAutoLink(tag.getId(), attributeName, resourceReference, anchor);
 						} else {
-							return new ResourceReferenceAutoLink(tag.getId(), container, attributeName, src);
+							return new ResourceReferenceAutoLink(tag.getId(), container, attributeName, src, anchor);
 						}
 					}
 				}
@@ -187,19 +188,21 @@ public class ExtensibleAutolinker
 	{
 		private final String attributeName;
 		private final ResourceReference resourceReference;
+		private final String anchor;
 
-		ResourceReferenceAutoLink(String id, String attributeName, ResourceReference resourceReference)
+		ResourceReferenceAutoLink(String id, String attributeName, ResourceReference resourceReference, String anchor)
 		{
 			super(id);
 			this.attributeName = attributeName;
 			this.resourceReference = resourceReference;
+			this.anchor = anchor;
 		}
 
-		public ResourceReferenceAutoLink(String id, MarkupContainer parent,
-		                                 String attributeName, String possibleResourcePath)
+		public ResourceReferenceAutoLink(String id, MarkupContainer parent, String attributeName, String possibleResourcePath, String anchor)
 		{
 			super(id);
 			this.attributeName = attributeName;
+			this.anchor = anchor;
 			if (PackageResource.exists(parent.getClass(), possibleResourcePath, parent.getLocale(),
 					parent.getStyle(), parent.getVariation()))
 			{
@@ -219,8 +222,11 @@ public class ExtensibleAutolinker
 			super.onComponentTag(tag);
 			if (resourceReference != null)
 			{
-				final CharSequence resourceUrl =
-						RequestCycle.get().urlFor(resourceReference, null);
+				StringBuilder resourceUrl = new StringBuilder(RequestCycle.get().urlFor(resourceReference, null));
+				if (anchor != null) {
+					resourceUrl.append("#");
+					resourceUrl.append(anchor);
+				}
 				tag.put(attributeName, resourceUrl);
 			}
 		}
